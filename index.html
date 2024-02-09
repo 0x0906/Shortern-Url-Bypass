@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Shorten URL Bypass</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #1f1f1f;
+        }
+        .container {
+            color: white;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            display: none;
+        }
+        .head {
+            color: limegreen;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .sub-head {
+            font-size: 18px;
+            font-weight: bold;
+            color: yellow;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .inputBox {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #getBtn {
+            cursor: pointer;
+            margin-top: 20px;
+            background-color: #0a4788;
+            color: #fff;
+            font-weight: bolder;
+            padding: 10px;
+            border-radius: 5px;
+           
+        }
+        #getBtn:hover {
+            background-color: #0056b3;
+        }
+        .output {
+            margin-top: 10px; 
+            padding: 0.5rem 1rem;
+            border-radius: 0.4rem;
+            display: block;
+        }
+        .data{
+            overflow: hidden;
+            width: 100%;
+        }
+        a{
+            font-weight: normal;
+            font-size: 14px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <span class="head">Shorten Url Bypass</span>
+    <span class="sub-head">Only Supports Tnshort.net</span>
+    <span class="content">This project is only made to test my own skills and demonstrate the power of HttpClient in C#. As you know, in the future, they can update their website. So, in the future, this shorten URL bypass project may not work for tnshort.net too. Until then, enjoy!</span>
+    <input class="form-control inputBox" id="code" type="text" name="code" placeholder="CODE">
+    <button type="button" id="getBtn" class="btn btn-primary" onclick="getOrginalurl()">Get original url</button>
+    <span class="content" style="background-color:rgb(168, 67, 67);font-weight: bolder;padding: 0.5rem 1rem;border-radius: 10px;margin-top: 1.5rem; margin-bottom: 0.8rem;">Warning: Decoded shortened URLs may lead to potentially harmful or discomforting content. Exercise caution and verify the link's destination before clicking.</span>
+    <div class="output">
+        <div class="data">
+            <a href="#" target="_blank"></a>
+        </div>
+    </div>   
+</div>
+
+<script src="https://kit.fontawesome.com/b98ee13847.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var container = document.querySelector('.container');
+        if(localStorage.getItem('wait') === 'true'){
+            clearElements();
+            var warn = document.createElement('div');
+            warn.textContent = 'Don\'t refresh while working. Please wait for 30 seconds..';
+            warn.style.color = 'red';
+            warn.style.fontWeight = 'bold';
+            document.body.style.background = 'white';
+            document.body.appendChild(warn);
+            setTimeout(function() {
+                localStorage.setItem('wait', 'false');
+                document.body.removeChild(warn);
+                document.body.style.background = '#1f1f1f';
+                container.style.display = "flex"
+                window.location = window.location;
+            }, 30000);
+        }
+        else
+        {
+            document.body.style.background = '#1f1f1f';
+            container.style.display = "flex"
+        }
+    });
+    function clearElements(){
+        var body = document.body;
+            while (body.firstChild) {
+                body.removeChild(body.firstChild);
+            }
+    }
+    async function getOrginalurl() {
+        var code = document.getElementById('code');
+        if(code.value === "")
+        {
+            displayOutput("empty", true);
+            return;
+        }
+        var btn = document.getElementById('getBtn');
+        btn.textContent = "please, wait...";
+        btn.disabled = true;
+        localStorage.setItem('wait', 'true');
+        var server_endpoint = 'https://imcqmbsfcogdnpjvkmvk.bsite.net/Bypass/' + code.value;
+
+        await fetch(server_endpoint, {
+            method: 'POST',
+        })
+        .then(response => response.text())
+        .then(data => {
+            displayOutput(data, false);
+        })
+        .catch(error => {
+            displayOutput("Error: " + error, true);
+        });
+        setTimeout(function() {
+            localStorage.setItem('wait', 'false');
+            btn.disabled = false;
+            btn.textContent = "Get original url";
+        }, 5000);
+    }
+    function displayOutput(output, isError){
+        var outputElement = document.querySelector('.output');
+        var anchorElement = document.querySelector('.data a');
+        if(output.includes("Error")) isError = true;
+        if (isError === true) {
+            outputElement.style.background = "#3a1f1f";
+            anchorElement.href = "#";
+            anchorElement.textContent = "an error occurred please try again later.";
+            console.log(output);
+        }
+        else{
+            output = output.replace('"', '',)
+            output = output.replace('"', '',)
+            anchorElement.textContent = output;
+            anchorElement.href = output;
+            outputElement.style.background = "#1f3a1f";
+        }
+    }
+
+</script>
+
+</body>
+</html>
